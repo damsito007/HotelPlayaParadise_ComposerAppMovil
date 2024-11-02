@@ -1,4 +1,4 @@
-package com.example.hotelplayaparadise.ui.theme
+package com.example.hotelplayaparadise.ui.theme.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,6 +1,5 @@
-package com.example.hotelplayaparadise.ui.theme
+package com.example.hotelplayaparadise.ui.theme.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

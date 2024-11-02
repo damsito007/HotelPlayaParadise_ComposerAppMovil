@@ -1,4 +1,4 @@
-package com.example.hotelplayaparadise.ui.theme
+package com.example.hotelplayaparadise.ui.theme.theme
 
 import androidx.compose.ui.graphics.Color
 
