@@ -18,8 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 
 @Composable
@@ -68,4 +70,12 @@ fun SplashScreen( navController: NavHostController) {
             )
         }
     }
+}
+// Función de previsualización
+@Preview(showBackground = true)
+@Composable
+fun SplashScreenPreview() {
+    // Utilizamos rememberNavController para crear una instancia simulada de NavController
+    val navController = rememberNavController()
+    SplashScreen(navController = navController)
 }

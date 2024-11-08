@@ -71,4 +71,16 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // https://mvnrepository.com/artifact/com.github.kittinunf.fuel/fuel
+    implementation("com.github.kittinunf.fuel:fuel:3.0.0-alpha03")
+// https://mvnrepository.com/artifact/com.github.kittinunf.fuel/fuel-android
+    implementation("com.github.kittinunf.fuel:fuel-android:2.3.1")
+// https://mvnrepository.com/artifact/com.google.code.gson/gson
+    implementation("com.google.code.gson:gson:2.11.0")
+// https://mvnrepository.com/artifact/io.coil-kt/coil-compose
+    implementation("io.coil-kt:coil-compose:2.7.0")
+// https://mvnrepository.com/artifact/com.github.kittinunf.fuel/fuel-coroutines
+    implementation("com.github.kittinunf.fuel:fuel-coroutines:2.3.1")
+
 }

@@ -30,8 +30,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.hotelplayaparadise.R
 
 
@@ -117,4 +119,12 @@ fun ProfileScreen(navController: NavHostController) {
             Text(text = "Volver", color = Color.White)
         }
     }
+}
+
+// Función de previsualización
+@Preview(showBackground = true)
+@Composable
+fun ProfileScreenPreview() {
+    val navController = rememberNavController()
+    ProfileScreen(navController = navController)
 }

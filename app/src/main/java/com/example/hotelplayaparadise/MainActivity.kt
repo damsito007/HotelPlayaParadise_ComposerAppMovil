@@ -172,7 +172,7 @@ fun OpcionesMenuLateral(navController: NavHostController) {
                 // Opción Informe de Satisfacción
                 NavigationDrawerItem(
                     icon = { Icon(imageVector = Icons.Default.ThumbUp, contentDescription = "Informe de Satisfacción") },
-                    label = { Text("Informe de Satisfacción") },
+                    label = { Text("Informe de MongoDB") },
                     selected = false,
                     onClick = { navController.navigate("report") }
                 )
