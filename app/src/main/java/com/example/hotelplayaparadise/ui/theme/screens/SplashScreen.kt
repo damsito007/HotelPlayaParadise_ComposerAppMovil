@@ -18,8 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 
 @Composable
@@ -38,9 +40,9 @@ fun SplashScreen( navController: NavHostController) {
             .fillMaxSize()
             .background(
                 Brush.sweepGradient(
-                    0.0f to Color(0xFF0D47A1), // Azul oscuro
-                    0.5f to Color(0xFF6A1B9A), // Púrpura oscuro
-                    1.0f to Color(0xFF0D47A1), // Azul oscuro
+                    0.0f to Color(0xFF238C98), // Color inicial: verde azulado
+                    0.5f to Color(0xFF6A1B9A), // Color intermedio: púrpura oscuro
+                    1.0f to Color(0xFF238C98), // Color final: verde azulado
                     center = Offset(0.5f, 0.5f)
                 )
             ), // Color de fondo
@@ -68,4 +70,12 @@ fun SplashScreen( navController: NavHostController) {
             )
         }
     }
+}
+// Función de previsualización
+@Preview(showBackground = true)
+@Composable
+fun SplashScreenPreview() {
+    // Utilizamos rememberNavController para crear una instancia simulada de NavController
+    val navController = rememberNavController()
+    SplashScreen(navController = navController)
 }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -28,8 +29,10 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
@@ -43,10 +46,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,12 +64,45 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.hotelplayaparadise.ui.theme.screens.ApiService
+import com.example.hotelplayaparadise.ui.theme.screens.FacturasTodasCard
+import com.example.hotelplayaparadise.ui.theme.screens.IngresoCard
 import com.example.hotelplayaparadise.ui.theme.screens.LoginScreen
+import com.example.hotelplayaparadise.ui.theme.screens.NewReservationCard
+import com.example.hotelplayaparadise.ui.theme.screens.PagoCard
 import com.example.hotelplayaparadise.ui.theme.screens.ProfileScreen
 import com.example.hotelplayaparadise.ui.theme.screens.ReportScreen
+import com.example.hotelplayaparadise.ui.theme.screens.ReservationCard
+import com.example.hotelplayaparadise.ui.theme.screens.ReservationCardall
+import com.example.hotelplayaparadise.ui.theme.screens.RetrofitInstance
 import com.example.hotelplayaparadise.ui.theme.screens.SplashScreen
 import com.example.hotelplayaparadise.ui.theme.theme.HotelPlayaParadiseTheme
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import kotlin.random.Random
+
+//Interface del servicio de la api
+interface ApiService2 {
+    @GET("Reservacion/Todas")
+    fun getingresocliente(): Call<List<ClienteIngreso>>
+}
+//Instancia de Retrofit
+object RetrofitInstance2 {
+    private const val BASE_URL = "https://xmcf8cn0-5069.use.devtunnels.ms/"
+    val apiService2: ApiService2 by lazy {
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiService2::class.java)
+    }
+}
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -172,7 +215,7 @@ fun OpcionesMenuLateral(navController: NavHostController) {
                 // Opción Informe de Satisfacción
                 NavigationDrawerItem(
                     icon = { Icon(imageVector = Icons.Default.ThumbUp, contentDescription = "Informe de Satisfacción") },
-                    label = { Text("Informe de Satisfacción") },
+                    label = { Text("Informe de MongoDB") },
                     selected = false,
                     onClick = { navController.navigate("report") }
                 )
@@ -216,113 +259,87 @@ fun HomeScreen(navController: NavHostController) {
 //Contenido del home
 @Composable
 fun HomeContent() {
-    Column(
+    var clienteingre by remember { mutableStateOf<List<ClienteIngreso>>(emptyList()) }
+    var loading by remember { mutableStateOf(true) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+
+        RetrofitInstance2.apiService2.getingresocliente().enqueue(object :
+            Callback<List<ClienteIngreso>> {
+            override fun onResponse(call: Call<List<ClienteIngreso>>, response: Response<List<ClienteIngreso>>) {
+                if (response.isSuccessful) {
+                    clienteingre = response.body() ?: emptyList()
+                } else {
+                    error = "Error: ${response.message()}"
+                }
+            }
+
+            override fun onFailure(call: Call<List<ClienteIngreso>>, t: Throwable) {
+                error = "Failed to load data: ${t.message}"
+            }
+        })
+    }
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-    ) {
-        // Sección de Indicadores con LazyRow
-        Text(
-            text = "Indicadores de Rendimiento",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(horizontal = 8.dp)
-        ) {
-
-            items(indicators) { indicator ->
-                IndicatorCard(indicator)
-            }
-        }
-
-        // Espacio para el gráfico (por ahora, un ícono)
-        Spacer(modifier = Modifier.height(32.dp))
-        Text(
-            text = "Gráficos de Ventas",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-                .background(MaterialTheme.colorScheme.surfaceVariant),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Info,
-                contentDescription = "Placeholder Gráfico",
-                modifier = Modifier.size(80.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-
-        // Sección final: Resumen de actividad o reporte
-        Spacer(modifier = Modifier.height(32.dp))
-        Text(
-            text = "Resumen de Actividad",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .background(MaterialTheme.colorScheme.surfaceVariant),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Datos de actividad reciente...",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
-
-// Datos de ejemplo para los indicadores
-val indicators = listOf(
-    Indicator("Ventas", "$12,000", Icons.Default.ShoppingCart, Color(0xFF4CAF50)),
-    Indicator("Ganancias", "$8,000", Icons.Default.KeyboardArrowUp, Color(0xFFFFC107)),
-    Indicator("Clientes", "350", Icons.Default.AccountBox, Color(0xFF03A9F4))
-)
-
-@Composable
-fun IndicatorCard(indicator: Indicator) {
-    Card(
-        modifier = Modifier.size(width = 150.dp, height = 100.dp),
-        colors = CardDefaults.cardColors(containerColor = indicator.color),
-        elevation = CardDefaults.cardElevation(4.dp)
-    ) {
+    ){
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+                .padding(bottom = 80.dp) // Make space for the fixed button at the bottom
+            ,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                imageVector = indicator.icon,
-                contentDescription = indicator.title,
-                modifier = Modifier.size(24.dp),
-                tint = Color.White
+            // Title
+            Text(
+                text = "Informe del Modelo Tabular",
+                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(vertical = 16.dp)
             )
-            Text(text = indicator.title, color = Color.White, fontSize = 16.sp)
-            Text(text = indicator.value, color = Color.White, fontSize = 18.sp, style = MaterialTheme.typography.titleMedium)
-        }
-    }
-}
 
-// Clase para los indicadores
-data class Indicator(
-    val title: String,
-    val value: String,
-    val icon: androidx.compose.ui.graphics.vector.ImageVector,
-    val color: Color
-)
+            // Display loading or error message
+            if (loading) {
+                // Barra de carga con color primario de MaterialTheme
+                CircularProgressIndicator(
+                    modifier = Modifier.size(50.dp),
+                    color = MaterialTheme.colorScheme.primary // Usando color primario
+                )
+            } else if (error != null) {
+                Text("Error: $error", style = MaterialTheme.typography.bodyLarge.copy(color = Color.Red))
+            } else {
+
+                // Content displaying all reservation types
+                LazyColumn(modifier = Modifier.weight(1f)) {
+
+                    item {
+                        Text(
+                            text = "Reservaciones Totales:",
+                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp),
+                            textAlign = TextAlign.Center // Centrar el título
+                        )
+                    }
+
+                    //items(clienteingre) { reservationall ->
+                    //    ReservationCardall(reservationall)
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+
+
 @Composable
 fun SettingsScreen(navController: NavHostController) {
     // Pantalla de Configuración
