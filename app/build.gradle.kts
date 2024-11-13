@@ -91,5 +91,8 @@ dependencies {
     // https://mvnrepository.com/artifact/io.coil-kt/coil-compose
     implementation("io.coil-kt:coil-compose:2.7.0")
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2801ec7416c7f7407991aa817746507b5f9163f0
 }

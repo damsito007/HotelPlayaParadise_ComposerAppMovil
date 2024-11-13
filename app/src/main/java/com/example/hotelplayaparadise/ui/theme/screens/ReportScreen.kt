@@ -13,11 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+<<<<<<< HEAD
 import androidx.compose.ui.text.style.TextAlign
+=======
+>>>>>>> 2801ec7416c7f7407991aa817746507b5f9163f0
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+<<<<<<< HEAD
 import com.example.hotelplayaparadise.IngresoData
 import com.example.hotelplayaparadise.NewReservationData
 import com.example.hotelplayaparadise.PagoTotalPorMetodo
@@ -25,6 +29,8 @@ import com.example.hotelplayaparadise.R
 import com.example.hotelplayaparadise.ReservacionFactura
 import com.example.hotelplayaparadise.ReservacionTotal
 import com.example.hotelplayaparadise.ReservationData
+=======
+>>>>>>> 2801ec7416c7f7407991aa817746507b5f9163f0
 import com.google.gson.annotations.SerializedName
 import retrofit2.Call
 import retrofit2.Callback
@@ -33,6 +39,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 
+<<<<<<< HEAD
 // Retrofit service interface to fetch reservation data from the API
 interface ApiService {
 
@@ -59,11 +66,45 @@ interface ApiService {
 
     @GET("Facturas/total_pago_por_metodo")
     fun getfacturastotalmetodopago(): Call<List<PagoTotalPorMetodo>>
+=======
+// Define your data model for the API response
+data class ReservationData(
+    @SerializedName("_id") val id: String,
+    @SerializedName("habitacion_id") val habitacionId: String,
+    @SerializedName("paquete") val paquete: Paquete,
+    @SerializedName("estado_reservacion") val estadoReservacion: String,
+    @SerializedName("fechas") val fechas: Fechas,
+    @SerializedName("Factura_id") val facturaId: String,
+    @SerializedName("Clientes_id") val clientesId: String
+)
+
+data class Paquete(
+    @SerializedName("descripcion") val descripcion: String,
+    @SerializedName("costo") val costo: Double,
+    @SerializedName("nombre_paquete") val nombrePaquete: String,
+    @SerializedName("tiempo_dias") val tiempoDias: Int
+)
+
+data class Fechas(
+    @SerializedName("llegada") val llegada: String,
+    @SerializedName("salida") val salida: String,
+    @SerializedName("fecha_reservacion") val fechaReservacion: String
+)
+
+// Retrofit service interface to fetch reservation data from the API
+interface ApiService {
+    @GET("Reservacion/confirmadas")
+    fun getReservationData(): Call<List<ReservationData>>
+>>>>>>> 2801ec7416c7f7407991aa817746507b5f9163f0
 }
 
 // Retrofit instance to interact with the API
 object RetrofitInstance {
+<<<<<<< HEAD
     private const val BASE_URL = "https://f5frl5zq-8000.use2.devtunnels.ms/"
+=======
+    private const val BASE_URL = "https://4slz48p3-5000.use2.devtunnels.ms/"
+>>>>>>> 2801ec7416c7f7407991aa817746507b5f9163f0
     val apiService: ApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -75,6 +116,7 @@ object RetrofitInstance {
 
 @Composable
 fun ReportScreen(navController: NavHostController) {
+<<<<<<< HEAD
     // Estados para manejar todas las respuestas de la API
     var reservationstotal by remember { mutableStateOf<List<ReservacionTotal>>(emptyList()) }
     var reservations by remember { mutableStateOf<List<ReservationData>>(emptyList()) }
@@ -107,17 +149,34 @@ fun ReportScreen(navController: NavHostController) {
             }
         })
         // Fetching data from the first endpoint
+=======
+    // Fetch data from the API and display it
+    var reservations by remember { mutableStateOf<List<ReservationData>>(emptyList()) }
+    var loading by remember { mutableStateOf(true) }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    // Fetch reservation data on Composable load
+    LaunchedEffect(Unit) {
+>>>>>>> 2801ec7416c7f7407991aa817746507b5f9163f0
         RetrofitInstance.apiService.getReservationData().enqueue(object : Callback<List<ReservationData>> {
             override fun onResponse(call: Call<List<ReservationData>>, response: Response<List<ReservationData>>) {
                 if (response.isSuccessful) {
                     reservations = response.body() ?: emptyList()
+<<<<<<< HEAD
                 } else {
                     error = "Error: ${response.message()}"
+=======
+                    loading = false
+                } else {
+                    error = "Error: ${response.message()}"
+                    loading = false
+>>>>>>> 2801ec7416c7f7407991aa817746507b5f9163f0
                 }
             }
 
             override fun onFailure(call: Call<List<ReservationData>>, t: Throwable) {
                 error = "Failed to load data: ${t.message}"
+<<<<<<< HEAD
             }
         })
 
@@ -382,6 +441,41 @@ fun ReportScreen(navController: NavHostController) {
 
         }
         // Button to go back to the home screen (Fixed at the bottom)
+=======
+                loading = false
+            }
+        })
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Title
+        Text(
+            text = "Informe de Reservaciones",
+            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
+
+        // Display loading or error message
+        if (loading) {
+            Text("Cargando...", style = MaterialTheme.typography.bodyLarge)
+        } else if (error != null) {
+            Text("Error: $error", style = MaterialTheme.typography.bodyLarge.copy(color = Color.Red))
+        } else {
+            // Content displayed as a list of reservations
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                items(reservations) { reservation ->
+                    ReservationCard(reservation)
+                }
+            }
+        }
+
+        // Button to go back to the home screen
+>>>>>>> 2801ec7416c7f7407991aa817746507b5f9163f0
         Button(
             onClick = { navController.navigate("home") },
             modifier = Modifier
@@ -396,18 +490,28 @@ fun ReportScreen(navController: NavHostController) {
 }
 
 @Composable
+<<<<<<< HEAD
 fun ReservationCardall(reservationall: ReservacionTotal) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
         shape = MaterialTheme.shapes.medium
+=======
+fun ReservationCard(reservation: ReservationData) {
+    // Reservation card displaying each reservation's details
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+>>>>>>> 2801ec7416c7f7407991aa817746507b5f9163f0
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
+<<<<<<< HEAD
             // ID de Reserva
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -524,11 +628,33 @@ fun ReservationCardall(reservationall: ReservacionTotal) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Fecha de Salida: ${reservationall.fechas.salida}", style = MaterialTheme.typography.bodySmall)
             }
+=======
+            Text("ID de Reserva: ${reservation.id}", style = MaterialTheme.typography.bodyLarge)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Habitación ID: ${reservation.habitacionId}", style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Estado: ${reservation.estadoReservacion}", style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Paquete: ${reservation.paquete.nombrePaquete}", style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Descripción: ${reservation.paquete.descripcion}", style = MaterialTheme.typography.bodySmall)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Costo: \$${reservation.paquete.costo}", style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Días: ${reservation.paquete.tiempoDias} días", style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Fecha de Llegada: ${reservation.fechas.llegada}", style = MaterialTheme.typography.bodySmall)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Fecha de Salida: ${reservation.fechas.salida}", style = MaterialTheme.typography.bodySmall)
+>>>>>>> 2801ec7416c7f7407991aa817746507b5f9163f0
         }
     }
 }
 
+// Preview for the ReportScreen
+@Preview(showBackground = true)
 @Composable
+<<<<<<< HEAD
 fun ReservationCard(reservation: ReservationData) {
     // Reservation card displaying each reservation's details
     Card(
@@ -1009,6 +1135,8 @@ fun PagoCard(pago: PagoTotalPorMetodo) {
 // Preview for the ReportScreen
 @Preview(showBackground = true)
 @Composable
+=======
+>>>>>>> 2801ec7416c7f7407991aa817746507b5f9163f0
 fun ReportScreenPreview() {
     val navController = rememberNavController()
     ReportScreen(navController = navController)
